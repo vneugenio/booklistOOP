@@ -7,7 +7,7 @@ class Book {
 }
 
 class UI {
-    
+
     addBookToList(book) {
         const list = document.querySelector('table.u-full-width tbody#book-list');
 
@@ -59,6 +59,53 @@ class UI {
     }
 }
 
+class Storage {
+    // getBooks() is to fetch data from localStorage
+    static getBooks() {
+        let books;
+        if(localStorage.getItem('books') === null) {
+            books = [];
+        } else {
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+
+    static displayBooks() {
+        const books = Storage.getBooks();
+
+        books.forEach(function(book) {
+            const uI = new UI();
+
+            uI.addBookToList(book);
+        });
+    }
+
+    static addBook(book) {
+        const books = Storage.getBooks();
+        books.push(book);
+
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    static removeBook(isbn) {
+        let books = Storage.getBooks();
+        
+        // use loop to check each object in the array that
+        // contains the isbn of the item to remove
+        books.forEach(function(book, index) {
+            if(book.isbn === isbn) {
+                books.splice(index, 1);
+                // set new array to 'books' in localStorage
+                localStorage.setItem('books', JSON.stringify(books));
+            }
+        });
+    }
+}
+
+// Display books upon loading of page
+document.addEventListener('DOMContentLoaded', Storage.displayBooks());
+
 // Event Listeners
 document.querySelector('#book-form').addEventListener('submit', function(e) {
     const title = document.querySelector('#book-form #title').value,
@@ -84,6 +131,9 @@ document.querySelector('#book-form').addEventListener('submit', function(e) {
         // Clear fields
         uI.clearFields();
 
+        // Add to localStorage
+        Storage.addBook(book);
+
         // Success Alert
         uI.showAlert('Book Added', 'success');
     }
@@ -100,6 +150,10 @@ document.querySelector('#book-list').addEventListener('click', function(e) {
     // passing e.target as an argument to be able to detect whether
     // user clicks the <a> element
     uI.deleteBook(e.target);
+
+    // Remove from localStorage
+    // access text content of <td>, previous sibling of <a> parent element
+    Storage.removeBook(e.target.parentElement.previousElementSibling.textContent);
 
     // Show alert
     uI.showAlert('Book removed', 'success');
