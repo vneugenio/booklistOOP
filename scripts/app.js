@@ -96,15 +96,17 @@ document.querySelector('#book-form').addEventListener('submit', function(e) {
 
 // Event listener for delete
 
-// document.querySelector('#book-list').addEventListener('click', function(e) {
-//     // Instantiate UI
-//     const uI = new UI();
+document.querySelector('#book-list').addEventListener('click', function(e) {
+    // Instantiate UI
+    const uI = new UI();
 
-//     uI.deleteBook(e.target);
+    // passing e.target as an argument to be able to detect whether
+    // user clicks the <a> element
+    uI.deleteBook(e.target);
 
-//     // Show alert
-//     uI.showAlert('Book removed', 'success');
+    // Show alert
+    uI.showAlert('Book removed', 'success');
 
-//     e.preventDefault();
-// });
+    e.preventDefault();
+});
 
